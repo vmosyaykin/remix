@@ -5,6 +5,7 @@ import path from "path";
 import { pathToFileURL } from "url";
 import stripAnsi from "strip-ansi";
 import inquirer from "inquirer";
+import json5 from "json5";
 
 import { run } from "../cli/run";
 import { server } from "./msw";
@@ -280,6 +281,10 @@ describe("the create command", () => {
     expect(fse.existsSync(path.join(projectDir, "app/root.tsx"))).toBeFalsy();
     expect(fse.existsSync(path.join(projectDir, "tsconfig.json"))).toBeFalsy();
     expect(fse.existsSync(path.join(projectDir, "jsconfig.json"))).toBeTruthy();
+    let jsconfig = json5.parse(
+      fse.readFileSync(path.join(projectDir, "jsconfig.json"), "utf8")
+    );
+    expect(jsconfig.include).toEqual(["**/*.js", "**/*.jsx"]);
     expect(fse.existsSync(path.join(projectDir, "app/utils.js"))).toBeTruthy();
     let pkgJSON = JSON.parse(
       fse.readFileSync(path.join(projectDir, "package.json"), "utf-8")
